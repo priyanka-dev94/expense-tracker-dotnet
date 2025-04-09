@@ -1,10 +1,10 @@
-using ExpenseTrackerAPI.Data;
+﻿using ExpenseTrackerAPI.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ?? Add controller support
-builder.Services.AddControllers(); // ? Needed for [ApiController] controllers
+// 🔧 Add controller support
+builder.Services.AddControllers(); // ✅ Needed for [ApiController] controllers
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -14,7 +14,7 @@ builder.Services.AddDbContext<ExpenseTrackerDbContext>(options =>
 
 var app = builder.Build();
 
-// ?? Enable Swagger
+// 🔧 Enable Swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -23,10 +23,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// ?? Map controller endpoints
-app.MapControllers(); // ? Critical for your ExpenseController to work
-
-// (Optional) This minimal API route can be removed if not needed
-// app.MapGet("/weatherforecast", ... );
-
+// 🔧 Map controller endpoints
+app.MapControllers(); 
 app.Run();
