@@ -30,5 +30,33 @@ namespace ExpenseTrackerAPI.Services.Implementation
         {
             return await _context.Expenses.ToListAsync();
         }
+
+        public async Task<Expense?> UpdateExpenseAsync(int id, Expense updatedExpense)
+        {
+            var existingExpense = await _context.Expenses.FindAsync(id);
+            if (existingExpense == null)
+                return null;
+
+            existingExpense.Description = updatedExpense.Description;
+            existingExpense.Amount = updatedExpense.Amount;
+            existingExpense.Date = updatedExpense.Date;
+            existingExpense.Category = updatedExpense.Category;
+            existingExpense.ExpenseType = updatedExpense.ExpenseType;
+
+            await _context.SaveChangesAsync();
+            return existingExpense;
+        }
+
+        public async Task<bool> DeleteExpenseAsync(int id)
+        {
+            var expense = await _context.Expenses.FindAsync(id);
+            if (expense == null)
+                return false;
+
+            _context.Expenses.Remove(expense);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
     }
 }

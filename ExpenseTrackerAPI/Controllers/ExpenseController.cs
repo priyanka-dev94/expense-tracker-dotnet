@@ -36,5 +36,22 @@ namespace ExpenseTrackerAPI.Controllers
             var expenses = await _expenseService.GetAllExpensesAsync();
             return Ok(expenses);
         }
+
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdateExpense(int id, [FromBody] Expense updatedExpense)
+        {
+            var result = await _expenseService.UpdateExpenseAsync(id, updatedExpense);
+            if (result == null) return NotFound();
+            return Ok(result);
+        }
+
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteExpense(int id)
+        {
+            var success = await _expenseService.DeleteExpenseAsync(id);
+            if (!success) return NotFound();
+            return NoContent(); // 204
+        }
+
     }
 }
