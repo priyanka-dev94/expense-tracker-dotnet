@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ExpenseTrackerAPI.Models;
-using ExpenseTrackerAPI.Data;
-
+﻿using ExpenseTrackerAPI.Models;
+using ExpenseTrackerAPI.Services.Interface;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerAPI.Controllers
 {
@@ -9,27 +8,33 @@ namespace ExpenseTrackerAPI.Controllers
     [Route("api/[controller]")]
     public class ExpenseController : ControllerBase
     {
-        private readonly ExpenseTrackerDbContext _context;
+        private readonly IExpenseService _expenseService;
 
-        public ExpenseController(ExpenseTrackerDbContext context)
+        public ExpenseController(IExpenseService expenseService)
         {
-            _context = context;
+            _expenseService = expenseService;
         }
 
-        [HttpGet]
-        public IActionResult GetExpenses()
+        [HttpPost("addexpense")]
+        public async Task<IActionResult> AddExpense([FromBody] Expense expense)
         {
-            var expenses = _context.Expenses.ToList();
-            return Ok(expenses);
+            var result = await _expenseService.AddExpenseAsync(expense);
+            return CreatedAtAction(nameof(GetExpenseById), new { id = result.Id }, result);
         }
 
-        [HttpPost]
-        public IActionResult CreateExpense([FromBody] Expense expense)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetExpenseById(int id)
         {
-            _context.Expenses.Add(expense);
-            _context.SaveChanges();
+            var expense = await _expenseService.GetExpenseByIdAsync(id);
+            if (expense == null) return NotFound();
             return Ok(expense);
         }
-    }
 
+        [HttpGet("getexpenses")]
+        public async Task<IActionResult> GetAll()
+        {
+            var expenses = await _expenseService.GetAllExpensesAsync();
+            return Ok(expenses);
+        }
+    }
 }
